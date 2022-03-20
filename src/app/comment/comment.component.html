@@ -1,0 +1,144 @@
+<div class="comment__block">
+  <div class="comment__main comment">
+    <div class="comment__score-block">
+      <button class="score-btn-plus">+</button>
+      <span class="comment-score">{{ comment?.score }}</span>
+      <button class="score-btn-minus">-</button>
+    </div>
+    <div class="comment__content">
+      <div class="comment__header">
+        <div class="comment__avatar">
+          <img src="{{ comment?.user?.image?.png }}" alt="Avatar" />
+        </div>
+        <h2>
+          {{ comment?.user?.username }}
+          <span></span>
+          <span class="comment__date">{{ comment?.createdAt }}</span>
+        </h2>
+        <div class="control-btn">
+          <ng-container
+            *ngIf="
+              comment?.user?.username !== currentUser?.username;
+              else currentUserButtons
+            "
+          >
+            <button class="comment__reply-btn" (click)="showReplyBox()">
+              Reply
+            </button>
+          </ng-container>
+          <ng-template #currentUserButtons>
+            <button class="delete-btn" (click)="deleteComment(comment?.id)">
+              Delete
+            </button>
+            <button class="edit-btn" (click)="showEditBox()">Edit</button>
+          </ng-template>
+        </div>
+      </div>
+      <ng-container *ngIf="currentUser.username === comment.user.username">
+        <p class="comment__text" *ngIf="!editStatus">
+          {{ comment?.content }}
+        </p>
+        <ng-container *ngIf="editStatus">
+          <textarea class="edit-area" [(ngModel)]="editContent">{{
+            comment?.content
+          }}</textarea>
+          <button
+            class="update-btn"
+            (click)="editComment(comment.id, editContent)"
+          >
+            Update
+          </button>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!(currentUser.username === comment.user.username)">
+        <p class="comment__text">
+          {{ comment?.content }}
+        </p>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="comment?.replies?.length" class="comment__reply reply">
+    <div
+      *ngFor="let replyComment of comment?.replies"
+      class="reply__block comment"
+    >
+      <div class="comment__score-block">
+        <button class="score-btn-plus">+</button>
+        <span class="comment-score">{{ replyComment.score }}</span>
+        <button class="score-btn-minus">-</button>
+      </div>
+      <div class="comment__content">
+        <div class="comment__header">
+          <div class="comment__avatar">
+            <img src="{{ replyComment.user.image.png }}" alt="Avatar" />
+          </div>
+          <h2>
+            {{ replyComment.user.username }}
+            <span></span>
+            <span class="comment__date">{{ replyComment.createdAt }}</span>
+          </h2>
+          <div class="control-btn">
+            <ng-container
+              *ngIf="
+                replyComment.user.username !== currentUser?.username;
+                else currentUserButtonsReply
+              "
+            >
+              <button class="comment__reply-btn" (click)="showReplyBox()">
+                Reply
+              </button>
+            </ng-container>
+            <ng-template #currentUserButtonsReply>
+              <button
+                class="delete-btn"
+                (click)="deleteComment(replyComment?.id)"
+              >
+                Delete
+              </button>
+              <button class="edit-btn" (click)="showEditBox()">Edit</button>
+            </ng-template>
+          </div>
+        </div>
+        <ng-container
+          *ngIf="currentUser.username === replyComment.user.username"
+        >
+          <p class="comment__text" *ngIf="!editStatus">
+            {{ replyComment?.content }}
+          </p>
+          <ng-container *ngIf="editStatus">
+            <textarea class="edit-area" [(ngModel)]="editContent">{{
+              replyComment?.content
+            }}</textarea>
+            <button
+              class="update-btn"
+              (click)="editComment(replyComment.id, editContent)"
+            >
+              Update
+            </button>
+          </ng-container>
+        </ng-container>
+        <ng-container
+          *ngIf="!(currentUser.username === replyComment.user.username)"
+        >
+          <p class="comment__text">
+            {{ replyComment?.content }}
+          </p>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="replyStatus">
+    <div class="reply__block comment">
+      <div class="comment__avatar">
+        <img src="{{ currentUser?.image?.png }}" />
+      </div>
+      <textarea class="comment__content" #replyContent></textarea>
+      <button
+        class="reply-send-btn"
+        (click)="replyComment(comment.id, replyContent.value)"
+      >
+        Reply
+      </button>
+    </div>
+  </ng-container>
+</div>
